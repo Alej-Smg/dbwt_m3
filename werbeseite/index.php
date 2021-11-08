@@ -14,6 +14,18 @@
 
 	<?php include "./Gerichte.php"?>
 
+	<?php 
+	$count;
+	if (file_exists("countVisit.json")) {
+		$count = json_decode(file_get_contents("countVisit.json"), true);
+	} else $count = 0;
+	
+	$count ++;
+
+	file_put_contents("countVisit.json", json_encode($count));
+	unset($count);
+	?>
+
 	<header>
 		<div id="Logo">
 			<p>E-Mensa Logo</p>
@@ -65,29 +77,37 @@
 			<h2 id="zahlen">E-Mensa in Zahlen</h2>
 			<div id="grid2">
 				<div>
-					<p class="mensaZahlen">X Besuche</p>
+					<p class="mensaZahlen"><?php
+					$count;
+					if (file_exists("countVisit.json")) {
+						$count = json_decode(file_get_contents("countVisit.json"), true);
+					} else $count = 0;
+
+					echo $count;
+
+					unset($count);
+					?> Besuche</p>
 				</div>
 				<div>
-					<p class="mensaZahlen">Y Anmeldungen zum Newsletter</p>
+					<p class="mensaZahlen">
+					<?php if (file_exists("user.json")) {
+						$userlist = json_decode(file_get_contents("user.json"), true);
+						echo count($userlist) . "";
+						file_put_contents("user.json", json_encode($userlist));
+						unset($userlist);
+					} else echo 0;
+					?> Anmeldungen zum Newsletter</p>
 				</div>
 				<div>
-					<p class="mensaZahlen">Z Speisen</p>
+					<p class="mensaZahlen">
+					<?php
+						echo count($gerichte) . "";
+					?> Speisen</p>
 				</div>
 			</div>
 
 			<h2 id="kontakt">Interesse geweckt? Wir informieren Sie!</h2>
 			<div>
-				<!-- 		____________________Kopiert aus w3Schools_____________________
-	$name = test_input($_POST["vorname"]);
-	// check if name only contains letters and whitespace
-	if (!preg_match("/^[a-zA-Z-' ]*$/",$name)) {
-	  $nameErr = "Only letters and white space allowed";
-	}
-	$_POST["email"] = test_input($_POST["email"]);
-	// check if e-mail address is well-formed
-	if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL) && (strpos($_POST["email"], "rcpt") && strpos($_POST["email"], "damnthespam") && strpos($_POST["email"], "wegwerfmail") && strpos($_POST["email"], "trashmail"))) {
-	  $_POST["email"]Err = "Invalid email format";
-	}-->
 				<form action="./index.php" method="post">
 					<div id="formGrid">
 						<div>
@@ -141,14 +161,6 @@
 							break;
 						}
 					}
-
-					// Gucken, ob nichterwünschte Mailadressen genutzt werden
-					// Falls ja => var $mailOK auf false setzen
-					// for ($i = 0; $i < count($bannedMail); $i++) {
-					// 	if (strpos($_POST["email"], $bannedMail[$i]) != false) {
-					// 		$mailOK = false;
-					// 	}
-					// }
 
 					// Gucken ob der Name Sonderzeichen enthält 
 					// ja => 'Fehler' ausgeben, nein => skipp
