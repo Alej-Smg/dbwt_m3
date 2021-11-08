@@ -1,0 +1,144 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+    /* margin-left: 50px;
+    margin-right: 50px; */
+    border: 1px solid lightgray;
+    padding: .5%;
+}
+
+header, main {
+    border-bottom: 1px solid black;
+    display: grid;
+    grid-template-columns: 15% 60% auto;
+    grid-column-gap: 10px;
+    grid-template-rows: auto;
+    padding-bottom: 10px;
+    padding-top: 5px;
+}
+
+footer {
+    display: grid;
+    grid-template-columns: 15% 60% auto;
+    grid-column-gap: 10px;
+    grid-template-rows: auto;
+    padding-top: 5px;
+}
+
+#Logo, #menuzeile {
+    border: 1px solid black;
+}
+
+#Logo > p {
+    text-align: center;
+}
+
+#menuzeile > a {
+    margin-left: 20px;
+    vertical-align: -100%;
+}
+
+#empty_left, #empty_right {
+    grid-row-start: 1;
+    grid-row-end: auto;
+    border: 1px solid black;
+}
+
+#empty_left1, #empty_left2 {
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+
+#empty_right1, #empty_right2 {
+    grid-column-start: 3;
+    grid-column-end: 4;
+}
+
+#content {
+    display: grid;
+}
+
+img {
+    width: 100%;
+    height: auto;
+}
+
+h2 {
+    margin-bottom: 0%;
+}
+
+table, #thead {
+    border: 1px solid black;
+}
+
+td {
+    margin: 0%;
+    border: 1px solid lightgray;
+}
+
+.Preis {
+    text-align: center;
+}
+
+#grid2 {
+    display: grid;
+    grid-template-columns: 33% 33% auto;
+}
+
+.mensaZahlen {
+    text-align: center;
+    font-weight: bold;
+}
+
+#formGrid{
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+
+#prinzipien {
+    margin-left: 20%;
+}
+
+#aufwiedersehen {
+    text-align: center;
+}
+
+#footerListe {
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+
+#footerListe #footerListe > div {
+    border-left: black;
+}
+
+/* footer p ~ p{
+    border-left: 2px solid lightgray;
+} */
+
+#copyright{
+    text-align: right;
+}
+
+#myName {
+    text-align: center;    
+}
+
+#myNameDiv {
+    margin-left: 20%;
+}
+
+#impressum {
+    text-align: left;
+}
+
+#impressumDiv {
+    padding-left: 20%;
+}
+
+.footerBorder {
+    border-left: 1px solid black;
+    /* margin-left: 20%; */
+}
