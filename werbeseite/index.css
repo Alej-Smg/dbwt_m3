@@ -74,7 +74,7 @@ table, #thead {
 }
 
 td {
-    margin: 0%;
+    margin: 0px;
     border: 1px solid lightgray;
 }
 
