@@ -159,8 +159,7 @@
 				echo "Fehler während der Abfrage:  ", mysqli_error($link);
 				exit();
 			}
-
-			$resultArr = $result->fetch_array();
+			
 			echo "<h2>Liste Aller Allergene</h2><table>
 					<tr id='thead'>\n
 						<th>Code</th>\n
@@ -175,7 +174,7 @@
 				echo "</tr>";
 			}
 			echo "</table>";
-			unset($sql, $result, $resultArr);
+			unset($sql, $result);
 
 
 			?>
@@ -207,7 +206,16 @@
 				<div>
 					<p class="mensaZahlen">
 					<?php
-						echo count($gerichte) . "";
+					$sql = "SELECT * FROM gericht LIMIT 5";
+
+					$result = $link->query($sql);
+					if ($result->num_rows < 1) { // Überprüfen, ob die Abfrage Fehler hat
+						echo "Fehler während der Abfrage:  ", mysqli_error($link);
+						exit();
+					}
+						echo $result->num_rows . "";
+
+						unset($sql, $result);
 					?> Speisen</p>
 				</div>
 			</div>
