@@ -13,6 +13,7 @@
 
 	</head>
 	<body>
+		<!-- Filter optionen -->
 		<form action="./nl-admin.php" method="GET">
 			<label for="">Sortieren nach:</label><br>
 			<input type="radio" name="filter" value="filterName">
@@ -23,6 +24,7 @@
 			<input type="submit" value="Filter anwenden">
 		</form>
 		<table>
+			<!-- Tabellen Kopf -->
 		<thead>
 			<tr>
 				<td>Name</td>
@@ -39,15 +41,18 @@
 			$userlist = json_decode(file_get_contents("user.json"), true);
 		else $userlist = array(array());
 
+		// gucken, welcher Filter gesetzt ist 
 		if (isset($_GET["filter"]) && $_GET["filter"] == "filterName") array_multisort($userlist, SORT_ASC, 0);
-		if (isset($_GET["filter"]) && $_GET["filter"] == "filterEmail") array_multisort($userlist, SORT_ASC, 1);
+		if (isset($_GET["filter"]) && $_GET["filter"] == "filterEmail") array_multisort($userlist, SORT_ASC, 0);
 
-		
+		// falls nach Namen gesucht wird
 		if (isset($_GET["nameSearch"]) && strlen($_GET["nameSearch"]) > 0) {
 			foreach ($userlist as $user) {
+				// strings in lowercase umwandeln, für case insensitiv search
 				$haystack = strtolower($user[0]);
 				$needle = strtolower($_GET["nameSearch"]);
 
+				// wenn ein Eintrag gefunden wird: erstelle Listenelement
 				if((strpos($haystack, $needle) !== false)) {
 					echo "<tr>
 						<td>{$user[0]}</td> 
@@ -59,7 +64,7 @@
 				}
 
 			}
-		} else {
+		} else { // sonst gib alle Benutzer aus
 
 			foreach ($userlist as $user) {
 				echo "<tr>
