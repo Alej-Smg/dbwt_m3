@@ -15,14 +15,16 @@
 	<?php include "./Gerichte.php"?>
 
 	<?php 
-	// Zähler, wie oft Die Seite geladen wurde
+	// Zähler, wie oft Die Seite geladen wurde !! nicht IP abhängig !!
 	$count;
-	if (file_exists("countVisit.json")) {
-		$count = json_decode(file_get_contents("countVisit.json"), true);
-	} else $count = 0;
+	if (file_exists("countVisit.json")) { // Wenn Datei existiert bzw die Seite schonmal geladen wurde
+		$count = json_decode(file_get_contents("countVisit.json"), true); // lesen, wie oft die Seite schon geladen wurde
+	// sonst:
+	} else $count = 0; 
 	
+	// Zähler erhöhen
 	$count ++;
-
+	// und speichern
 	file_put_contents("countVisit.json", json_encode($count));
 	unset($count);
 
@@ -34,6 +36,7 @@
 									  // optional port der Datenbank
 	);
 
+	// Falls Verbindung Fehlschlägt: Fehler auswerfen und Skript beenden
 	if ($link->connect_error) {
 		echo "Verbindung fehlgeschlagen: ", mysqli_connect_error();
 		exit();
@@ -41,9 +44,11 @@
 	?>
 
 	<header>
+																				<!-- Kopfzeile mit Links -->
 		<div id="Logo">
 			<p>E-Mensa Logo</p>
 		</div>
+		<!-- Links zu Seitenabschnitten -->
 		<div id="menuzeile">
 			<a href="#ankundigung">Ankündigung</a>
 			<a href="#speisen">Speisen</a>
@@ -51,18 +56,21 @@
 			<a href="#kontakt">Kontakt</a>
 			<a href="#important">Wichtig für uns</a>
 		</div>
+																					<!-- Ende Kopfzeile -->
 	</header>
 	<main>
 		<div id="empty_left1">  
+																				<!-- Leere Spalte links -->
 		</div>
 		
-		<!-- Mittlere Spalte für Content -->
+																			<!-- Mittlere Spalte für Content -->
 		<div id="content">
 			<img src="top-pic.jpg" alt="Erstes Bild">
 
 			<h2 id="ankundigung">Bald gibt es Essen auch online ;)</h2>
 			<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum reprehenderit enim iste hic fugiat magnam blanditiis nihil eveniet officiis ipsum laborum, minus voluptate dolore atque repudiandae voluptatibus ullam? Beatae praesentium saepe aut repudiandae repellendus, at, reprehenderit recusandae non veniam neque, enim aliquam excepturi dolorem commodi? Accusamus dignissimos dolor perspiciatis quisquam nemo ratione provident voluptates quos odio ducimus quam, itaque voluptate rem aliquid vero harum est molestiae. <br> Quis, labore. Quia sapiente quos perspiciatis unde non officiis. Officia commodi a architecto, maxime accusantium ut dolorem nisi rem dolore, soluta incidunt eveniet perspiciatis harum. Deleniti sit iure est quidem eveniet hic nostrum assumenda deserunt explicabo beatae! Deleniti ipsum esse quisquam cum inventore autem facilis veniam nihil vero ab id amet totam in ratione cupiditate, placeat sed temporibus dolorem quibusdam! Impedit fuga natus, quae mollitia velit accusamus eos dolorum modi maxime deserunt illum sit cupiditate architecto et ullam rem quos recusandae sed quisquam cum!</p>
 			
+																				<!-- Anfang Speisen -->
 			<h2 id="speisen">Köstlichkeiten, die Sie erwarten</h2>
 			
 			<?php
@@ -73,84 +81,44 @@
 				// Abfrage (filtert ersten 5 Gerichte in var $result)
 				$sql = "SELECT * FROM gericht LIMIT 5";
 
+				// Query laufen lassen
 				$result = $link->query($sql);
 				if ($result->num_rows < 1) { // Überprüfen, ob die Abfrage Fehler hat
 					echo "Fehler während der Abfrage:  ", mysqli_error($link);
 					exit();
 				}
 
+				// Kopfzeile der Tabelle
 				echo "<table><tr id='thead'>\n
 				<th></th>\n
 				<th>Preis intern</th>\n
 				<th>Preis extern</th>\n
 				<th>Allergene</th>\n
 			</tr>\n";
+
+			// Schleife läuft durch erste Dim. des 2d Array
+			// "Für jede Zeile in der Ergebnistabelle"
 			while ($row = $result->fetch_assoc()){
+				// Query, die Allergene für das entsprechende Gericht filtert
 				$temp = $row['id'];
 				$sqlAllergens = "SELECT * FROM gericht_hat_allergen WHERE $temp = gericht_id";
 				$resultAllergen = $link->query($sqlAllergens);
 
+				// Tabellenelement des Gerichts
 				echo "<tr>";
 				echo "<td>" . $row['name'] . "</td>";
 				echo "<td>" . $row['preis_intern'] . "</td>";
 				echo "<td>" . $row['preis_extern'] . "</td>";
 				echo "<td>";
-				while($rowAllergen = $resultAllergen->fetch_assoc()){
+				while($rowAllergen = $resultAllergen->fetch_assoc()){ // "Für jedes Allergen in dem Gericht"
 					echo $rowAllergen['code'] . " ";
 				}
 				echo "</td>";
 				echo "</tr>";
 			}
-				/*for ($i = -1; $i < 5; $i++) {
-					if ($i == -1) { // erste Zeile der Tabelle
-						echo "<tr id='thead'>\n
-						<th></th>\n
-						<th>Preis intern</th>\n
-						<th>Preis extern</th>\n
-						<th>Allergene</th>\n
-					</tr>\n";
-					} else { // Tabellenkörper
-						$rowResult = $result->fetch_array();
-
-						$temp = $rowResult['id'];
-						$sql2 = "SELECT code FROM gericht_hat_allergen WHERE $temp = gericht_id";
-						$allergieCode = mysqli_query($link,$sql2);
-						$allergieCode = $allergieCode->fetch_array();
-
-						// echo "<tr>\n
-						// 	<td>". $rowResult['name'] ."</td>\n
-						// 	<td class='Preis'>". $rowResult['preis_intern'] ."</td>\n
-						// 	<td class='Preis'>". $rowResult['preis_extern'] ."</td>\n
-						// 	<td>"; 
-						// 	// Überprüfung ob Allergene aufgeführt sind
-						// 	if (isset($allergieCode)) {
-						// 	// Allergene Ausgeben
-								
-						// 	} else echo "Keine Allergene";
-						// 	// Tabelle abschließen
-						// 	"</td>\n
-						// 	</tr>";
-						if (isset($allergieCode))
-						echo "<tr>\n
-							<td>". $rowResult['name'] ."</td>\n
-							<td class='Preis'>". $rowResult['preis_intern'] ."</td>\n
-							<td class='Preis'>". $rowResult['preis_extern'] ."</td>\n
-							<td>". implode($allergieCode) ."</td>\n
-							</tr>";
-						else echo "<tr>\n
-						<td>". $rowResult['name'] ."</td>\n
-						<td class='Preis'>". $rowResult['preis_intern'] ."</td>\n
-						<td class='Preis'>". $rowResult['preis_extern'] ."</td>\n
-						<td>Keine Allergene</td>\n
-						</tr>";
-					}
-				}*/
-				echo "</table>";
+				echo "</table>"; // Tabelle schließen
 			}
 			unset($sql, $result);
-			// for ($i = 0; $i < count($gerichte); $i++) {
-			// 	echo "<img src='". $gerichte[$i][3] ."' alt=''>";
-			// }
 
 			// Tabelle mit allen Allergenen Ausgeben
 			$sql = "SELECT * FROM allergen";
@@ -160,12 +128,15 @@
 				exit();
 			}
 			
+			// Kopfzeile der Tabelle
 			echo "<h2>Liste Aller Allergene</h2><table>
 					<tr id='thead'>\n
 						<th>Code</th>\n
 						<th>Name</th>\n
 						<th>Typ</th>\n
 					</tr>";
+			
+			// "Für jedes gefundene Allergen: erstelle einen Eintrsg in der Tabelle"
 			while ($row = $result->fetch_assoc()){
 				echo "<tr>";
 				echo "<td>" . $row['code'] . "</td>";
@@ -173,16 +144,18 @@
 				echo "<td>" . $row['typ'] . "</td>";
 				echo "</tr>";
 			}
-			echo "</table>";
+			echo "</table>"; // Tabelle schließen
 			unset($sql, $result);
 
 
 			?>
-
+																							<!-- Ende Speisen -->
+																							<!-- Anfang Zahlen -->
 			<h2 id="zahlen">E-Mensa in Zahlen</h2>
 			<div id="grid2">
 				<div>
 					<p class="mensaZahlen"><?php
+					// Lesen und ausgeben, wie oft die Seite geladen wurde
 					$count;
 					if (file_exists("countVisit.json")) {
 						$count = json_decode(file_get_contents("countVisit.json"), true);
@@ -195,7 +168,8 @@
 				</div>
 				<div>
 					<p class="mensaZahlen">
-					<?php if (file_exists("user.json")) {
+					<?php // Zählen, wie viele User sich aregistriert haben
+					if (file_exists("user.json")) {	// hat sich überhaupt ein User registriert?
 						$userlist = json_decode(file_get_contents("user.json"), true);
 						echo count($userlist) . "";
 						file_put_contents("user.json", json_encode($userlist));
@@ -205,7 +179,7 @@
 				</div>
 				<div>
 					<p class="mensaZahlen">
-					<?php
+					<?php // Zählen, wie viele Speisen es gibt !! an Tabelle auf der Seite angepasst, nicht an DB !!
 					$sql = "SELECT * FROM gericht LIMIT 5";
 
 					$result = $link->query($sql);
@@ -219,9 +193,11 @@
 					?> Speisen</p>
 				</div>
 			</div>
-
+																							<!-- Ende Zahlen -->
+																							<!-- Anfang Kontakt -->
 			<h2 id="kontakt">Interesse geweckt? Wir informieren Sie!</h2>
-			<div>
+			<div> 
+																							<!-- Kontaktformular -->
 				<form action="./index.php" method="post">
 					<div id="formGrid">
 						<div>
@@ -246,16 +222,14 @@
 					<label for="dsgvo">Den Datenschutzbestimmungen stimme ich zu</label>
 					<input type="submit" name="submit" id="formSubmit" value="Zum Newsletter anmelden">
 				</form>
-				
+																						<!-- Ende Kontaktformular -->
 				<?php
-										// Datenverarbeitung  //
+																							// Datenverarbeitung  //
 				
 				// Wenn vorname, email und die gewünschte Newslettersprache nicht leer sind:
 				if (isset($_POST["vorname"], $_POST["email"], $_POST["newsSprache"])) {
 				
-					// neue Userdaten lesen
-					$newUser = array(array($_POST["vorname"], $_POST["email"], $_POST["newsSprache"]));
-
+					
 					// boolean var. werden später gebraucht
 					$nameOK = false;
 					$mailOK = true;
@@ -275,6 +249,9 @@
 							break;
 						}
 					}
+
+					// neue Userdaten lesen
+					$newUser = array(array($_POST["vorname"], $_POST["email"], $_POST["newsSprache"]));
 
 					// Gucken ob der Name Sonderzeichen enthält 
 					// ja => 'Fehler' ausgeben, nein => skipp
@@ -310,7 +287,7 @@
 				}
 				?>
 			</div>
-			
+																								<!-- Ende Kontakt -->
 			<h2 id="important">Das ist uns wichtig</h2>
 			<div id="prinzipien">
 				<ul>
@@ -322,8 +299,10 @@
 			
 			<h2 id="aufwiedersehen"> Wir freuen uns auf Ihren Besuch!</h2>
 		</div>
-
-		<div id="empty_right1"></div>
+																						<!-- Ende Contentspalte -->
+		<div id="empty_right1">
+																						<!-- Leere Spalte rechts -->
+		</div>
 	</main>
 	<footer>
 		<div id="empty_left2">
